@@ -1,4 +1,4 @@
-package ru.keeponthewave.tasktracker.core.model;
+package ru.keeponthewave.tasktracker.model;
 
 public enum TaskStatus {
     NEW,

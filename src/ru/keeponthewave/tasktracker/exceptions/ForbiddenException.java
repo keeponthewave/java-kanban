@@ -1,4 +1,4 @@
-package ru.keeponthewave.tasktracker.core.exceptions;
+package ru.keeponthewave.tasktracker.exceptions;
 
 public class ForbiddenException extends RuntimeException {
     public ForbiddenException(String message) {

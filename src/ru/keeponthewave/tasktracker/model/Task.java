@@ -1,4 +1,4 @@
-package ru.keeponthewave.tasktracker.core.model;
+package ru.keeponthewave.tasktracker.model;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -6,10 +6,10 @@ import java.util.UUID;
 public class Task {
     protected String name;
     protected String description;
-    protected UUID id;
+    protected Integer id;
     protected TaskStatus status;
 
-    public Task(String name, String description, UUID id, TaskStatus status) {
+    public Task(String name, String description, Integer id, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.id = id;
@@ -32,11 +32,11 @@ public class Task {
         this.description = description;
     }
 
-    public UUID getId() {
+    public Integer getId() {
         return id;
     }
 
-    public Task setId(UUID id) {
+    public Task setId(Integer id) {
         this.id = id;
         return this;
     }
@@ -47,6 +47,13 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public Task updateFrom(Task other) {
+        setDescription(other.description);
+        setName(other.name);
+        setStatus(other.status);
+        return this;
     }
 
     @Override

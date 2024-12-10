@@ -1,26 +1,20 @@
-package ru.keeponthewave.tasktracker.core.model;
+package ru.keeponthewave.tasktracker.model;
 
-import ru.keeponthewave.tasktracker.core.exceptions.ForbiddenException;
+import ru.keeponthewave.tasktracker.exceptions.ForbiddenException;
 
 import java.util.List;
-import java.util.UUID;
 
 public class EpicTask extends Task {
-    private List<SubTask> subtasks;
+    private final List<SubTask> subtasks;
 
     public List<SubTask> getSubtasks() {
         return subtasks;
     }
 
-    public EpicTask setSubtasks(List<SubTask> subtasks) {
-        this.subtasks = subtasks;
-        return this;
-    }
-
     public EpicTask(
             String name,
             String description,
-            UUID id,
+            Integer id,
             TaskStatus status,
             List<SubTask> subtasks
     ) {
@@ -32,6 +26,13 @@ public class EpicTask extends Task {
     @Override
     public void setStatus(TaskStatus status) {
         throw new ForbiddenException("Операция запрещена");
+    }
+
+    @Override
+    public EpicTask updateFrom(Task other) {
+        setName(other.name);
+        setDescription(other.description);
+        return this;
     }
 
     public TaskStatus recalculateStatus() {
