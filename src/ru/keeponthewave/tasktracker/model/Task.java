@@ -1,7 +1,6 @@
 package ru.keeponthewave.tasktracker.model;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class Task {
     protected String name;
@@ -47,13 +46,6 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
-    }
-
-    public Task updateFrom(Task other) {
-        setDescription(other.description);
-        setName(other.name);
-        setStatus(other.status);
-        return this;
     }
 
     @Override

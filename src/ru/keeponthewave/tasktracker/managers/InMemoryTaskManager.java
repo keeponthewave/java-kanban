@@ -13,6 +13,10 @@ public class InMemoryTaskManager {
 
     private Integer idCounter = 0;
 
+    public InMemoryTaskManager() {
+        EpicTask.setSubTaskStorage(subTaskMap);
+    }
+
     public Collection<Task> getAllTasks() {
         return taskMap.values();
     }
@@ -28,8 +32,8 @@ public class InMemoryTaskManager {
     }
 
     public Task updateTask(Task task) {
-        SubTask existing = getSubTaskById(task.getId());
-        return existing.updateFrom(task);
+        checkTaskExistsInStorage(task.getId(), taskMap);
+        return taskMap.put(task.getId(), task);
     }
 
     public int deleteTaskById(int id) {
@@ -52,40 +56,60 @@ public class InMemoryTaskManager {
     }
 
     public SubTask createSubTask(SubTask task) {
+        checkTaskExistsInStorage(task.getEpicTaskId(), epicTaskMap);
+
         task.setId(generateId());
-        var epic = task.getEpicTask();
-        epic.getSubtasks().add(task);
+        subTaskMap.put(task.getId(), task);
+
+        var epic = epicTaskMap.get(task.getEpicTaskId());
+        epic.getSubtaskIds().add(task.getId());
         epic.recalculateStatus();
-        return subTaskMap.put(task.getId(), task);
+
+        return task;
     }
 
     public SubTask updateSubTask(SubTask task) {
-        SubTask existing = getSubTaskById(task.getId());
-        var updated = existing.updateFrom(task);
-        task.getEpicTask().recalculateStatus();
-        return updated;
+        checkTaskExistsInStorage(task.getId(), subTaskMap);
+        subTaskMap.put(task.getId(), task);
+
+        var epic = epicTaskMap.get(task.getEpicTaskId());
+        epic.recalculateStatus();
+
+        return task;
     }
 
     public int deleteSubTaskById(int id) {
-        var existing = getSubTaskById(id);
-        existing.getEpicTask()
-                .getSubtasks()
-                .remove(existing);
-        subTaskMap.remove(id);
+        checkTaskExistsInStorage(id, subTaskMap);
+        var subTask = subTaskMap.remove(id);
+
+        var epic = epicTaskMap.get(subTask.getEpicTaskId());
+        if (epic != null) {
+            epic.getSubtaskIds()
+                    .remove((Integer) id);
+            epic.recalculateStatus();
+        }
         return id;
     }
 
     public void deleteAllSubTasks() {
-        for (SubTask subTask : subTaskMap.values()) {
-            var epic = subTask.getEpicTask();
-            epic.getSubtasks().clear();
-            epic.recalculateStatus();
-        }
+        subTaskMap.values()
+                .stream()
+                .map(SubTask::getEpicTaskId)
+                .map(epicTaskMap::get)
+                .filter(Objects::nonNull)
+                .forEach(epicTask -> {
+                    epicTask.getSubtaskIds().clear();
+                    epicTask.recalculateStatus();
+                });
         subTaskMap.clear();
     }
 
     public Collection<SubTask> getEpicSubTasks(EpicTask task) {
-        return task.getSubtasks();
+        return task.getSubtaskIds()
+                .stream()
+                .map(subTaskMap::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     public Collection<EpicTask> getAllEpicTasks() {
@@ -103,24 +127,29 @@ public class InMemoryTaskManager {
     }
 
     public EpicTask updateEpicTask(EpicTask task) {
-        EpicTask existing = getEpicTaskById(task.getId());
-        return existing.updateFrom(task);
+        checkTaskExistsInStorage(task.getId(), epicTaskMap);
+
+        var existing = epicTaskMap.get(task.getId());
+        existing.setDescription(task.getDescription());
+        existing.setName(task.getName());
+
+        return existing;
     }
 
     public EpicTask deleteEpicTaskById(int id) {
+        checkTaskExistsInStorage(id, epicTaskMap);
         EpicTask existing = getEpicTaskById(id);
-
-        for (SubTask subtask : existing.getSubtasks()) {
-            deleteSubTaskById(subtask.getId());
-        }
+        existing.getSubtaskIds()
+                .stream()
+                .filter(Objects::nonNull)
+                .forEach(subTaskMap::remove);
 
         return epicTaskMap.remove(id);
     }
 
     public void deleteAllEpicTasks() {
-        for (EpicTask epicTask : getAllEpicTasks()) {
-            deleteEpicTaskById(epicTask.getId());
-        }
+        epicTaskMap.clear();
+        subTaskMap.clear();
     }
 
     private int generateId() {
