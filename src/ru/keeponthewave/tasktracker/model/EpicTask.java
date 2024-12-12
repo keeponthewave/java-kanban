@@ -27,29 +27,4 @@ public class EpicTask extends Task {
     public List<Integer> getSubtaskIds() {
         return subtaskIds;
     }
-
-    @Override
-    public void setStatus(TaskStatus status) {
-        throw new ForbiddenException("Операция запрещена");
-    }
-
-    public TaskStatus recalculateStatus() {
-        if (getSubtaskIds().isEmpty()) {
-            return TaskStatus.NEW;
-        }
-
-        for (TaskStatus status : TaskStatus.values()) {
-            boolean isAllSubtasksMatchStatus = getSubtaskIds()
-                    .stream()
-                    .map(subTaskStorage::get)
-                    .allMatch(t -> t.getStatus() == status);
-
-            if (isAllSubtasksMatchStatus) {
-                this.status = status;
-                return status;
-            }
-        }
-
-        return TaskStatus.IN_PROGRESS;
-    }
 }

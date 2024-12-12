@@ -3,6 +3,7 @@ package ru.keeponthewave.tasktracker.managers;
 import ru.keeponthewave.tasktracker.model.EpicTask;
 import ru.keeponthewave.tasktracker.model.SubTask;
 import ru.keeponthewave.tasktracker.model.Task;
+import ru.keeponthewave.tasktracker.model.TaskStatus;
 
 import java.util.*;
 
@@ -63,7 +64,7 @@ public class InMemoryTaskManager {
 
         var epic = epicTaskMap.get(task.getEpicTaskId());
         epic.getSubtaskIds().add(task.getId());
-        epic.recalculateStatus();
+        recalculateEpicStatus(epic);
 
         return task;
     }
@@ -73,7 +74,7 @@ public class InMemoryTaskManager {
         subTaskMap.put(task.getId(), task);
 
         var epic = epicTaskMap.get(task.getEpicTaskId());
-        epic.recalculateStatus();
+        recalculateEpicStatus(epic);
 
         return task;
     }
@@ -86,7 +87,7 @@ public class InMemoryTaskManager {
         if (epic != null) {
             epic.getSubtaskIds()
                     .remove((Integer) id);
-            epic.recalculateStatus();
+            recalculateEpicStatus(epic);
         }
         return id;
     }
@@ -99,7 +100,7 @@ public class InMemoryTaskManager {
                 .filter(Objects::nonNull)
                 .forEach(epicTask -> {
                     epicTask.getSubtaskIds().clear();
-                    epicTask.recalculateStatus();
+                    recalculateEpicStatus(epicTask);
                 });
         subTaskMap.clear();
     }
@@ -154,6 +155,26 @@ public class InMemoryTaskManager {
 
     private int generateId() {
         return idCounter++;
+    }
+
+    private TaskStatus recalculateEpicStatus(EpicTask epicTask) {
+        if (epicTask.getSubtaskIds().isEmpty()) {
+            return TaskStatus.NEW;
+        }
+
+        for (TaskStatus status : TaskStatus.values()) {
+            boolean isAllSubtasksMatchStatus = epicTask.getSubtaskIds()
+                    .stream()
+                    .map(subTaskMap::get)
+                    .allMatch(t -> t.getStatus() == status);
+
+            if (isAllSubtasksMatchStatus) {
+                epicTask.setStatus(status);
+                return status;
+            }
+        }
+
+        return TaskStatus.IN_PROGRESS;
     }
 
     private <T extends Task> void checkTaskExistsInStorage(Integer taskId, HashMap<Integer, T> storage) {
