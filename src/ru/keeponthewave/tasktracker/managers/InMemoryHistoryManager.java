@@ -7,7 +7,7 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private static final int HISTORY_CAPACITY = 10;
-    private final LinkedList<Task> historyList = new LinkedList<>();
+    private final List<Task> historyList = new LinkedList<>();
 
     @Override
     public int getCapacity() {
@@ -16,13 +16,13 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return historyList;
+        return List.copyOf(historyList);
     }
 
     @Override
     public void add(Task task) {
         if (historyList.size() == HISTORY_CAPACITY) {
-            historyList.poll();
+            historyList.removeFirst();
         }
         historyList.add(task);
     }

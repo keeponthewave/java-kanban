@@ -8,9 +8,9 @@ import ru.keeponthewave.tasktracker.model.TaskStatus;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> taskMap = new HashMap<>();
-    private final HashMap<Integer, EpicTask> epicTaskMap = new HashMap<>();
-    private final HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
+    private final Map<Integer, Task> taskMap = new HashMap<>();
+    private final Map<Integer, EpicTask> epicTaskMap = new HashMap<>();
+    private final Map<Integer, SubTask> subTaskMap = new HashMap<>();
 
     private final HistoryManager historyManager;
 
@@ -183,16 +183,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getHistory() {
-        return List.copyOf(historyManager.getHistory());
+        return historyManager.getHistory();
     }
 
     private int generateId() {
         return idCounter++;
     }
 
-    private TaskStatus recalculateEpicStatus(EpicTask epicTask) {
+    private void recalculateEpicStatus(EpicTask epicTask) {
         if (epicTask.getSubtaskIds().isEmpty()) {
-            return TaskStatus.NEW;
+            epicTask.setStatus(TaskStatus.NEW);
+            return;
         }
 
         for (TaskStatus status : TaskStatus.values()) {
@@ -203,14 +204,13 @@ public class InMemoryTaskManager implements TaskManager {
 
             if (isAllSubtasksMatchStatus) {
                 epicTask.setStatus(status);
-                return status;
+                return;
             }
         }
         epicTask.setStatus(TaskStatus.IN_PROGRESS);
-        return TaskStatus.IN_PROGRESS;
     }
 
-    private <T extends Task> void checkTaskExistsInStorage(Integer taskId, HashMap<Integer, T> storage) {
+    private void checkTaskExistsInStorage(Integer taskId, Map<Integer, ? extends Task> storage) {
         if (taskId == null || !storage.containsKey(taskId)) {
             throw new NoSuchElementException(String.format("Задачи с id=%s не существует.", taskId));
         }
