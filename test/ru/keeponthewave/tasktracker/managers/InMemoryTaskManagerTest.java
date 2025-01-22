@@ -6,7 +6,6 @@ import ru.keeponthewave.tasktracker.model.EpicTask;
 import ru.keeponthewave.tasktracker.model.SubTask;
 import ru.keeponthewave.tasktracker.model.Task;
 import ru.keeponthewave.tasktracker.model.TaskStatus;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
