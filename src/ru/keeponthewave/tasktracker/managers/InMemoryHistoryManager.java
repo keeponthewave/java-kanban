@@ -16,7 +16,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         private Node prev;
         private Task value;
 
-        public Node() {}
+        public Node() {
+
+        }
 
         public Node(Node next, Node prev, Task value) {
             this.next = next;
