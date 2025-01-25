@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface HistoryManager {
     List<Task> getHistory();
+
     void add(Task task);
-    int getCapacity();
+
+    void remove(int id);
 }

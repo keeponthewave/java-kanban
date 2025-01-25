@@ -6,8 +6,6 @@ import ru.keeponthewave.tasktracker.model.EpicTask;
 import ru.keeponthewave.tasktracker.model.SubTask;
 import ru.keeponthewave.tasktracker.model.Task;
 import ru.keeponthewave.tasktracker.model.TaskStatus;
-
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -251,6 +249,24 @@ class InMemoryTaskManagerTest {
         assertEquals(history.getFirst(), epic);
         assertEquals(history.get(1), task);
         assertEquals(history.getLast(), subtask);
+    }
+
+    @Test
+    void shouldHistoryCorrectlyWorkWhenTwiceGetTask() {
+        SubTask subtask = new SubTask("Test task", "it's test task", 0, TaskStatus.NEW, epic.getId());
+        Task task = new Task("Test task", "it's test task", 1, TaskStatus.NEW);
+        taskManager.createTask(task);
+        taskManager.createSubTask(subtask);
+
+        taskManager.getEpicTaskById(epic.getId());
+        taskManager.getTaskById(task.getId());
+        taskManager.getSubTaskById(subtask.getId());
+        taskManager.getEpicTaskById(epic.getId());
+
+        List<Task> history = taskManager.getHistory();
+        assertEquals(history.get(0), task);
+        assertEquals(history.get(1), subtask);
+        assertEquals(history.get(2), epic);
     }
 
     @Test
