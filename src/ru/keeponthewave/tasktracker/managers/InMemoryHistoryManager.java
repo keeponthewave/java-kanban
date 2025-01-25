@@ -46,7 +46,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void remove(int id) {
         if (!nodeMap.containsKey(id)) {
-            throw new NoSuchElementException();
+            return;
         }
 
         var currentNode = nodeMap.get(id);
