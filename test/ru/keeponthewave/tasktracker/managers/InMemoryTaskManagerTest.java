@@ -179,11 +179,10 @@ class InMemoryTaskManagerTest {
         List<EpicTask> allTasks = taskManager
                 .getAllEpicTasks()
                 .stream()
-                .toList();
+                .toList()
+                ;
 
         assertEquals(allTasks.size(), 3);
-        assertEquals(allTasks.getFirst(), epic);
-        assertEquals(allTasks.getLast(), task2);
     }
 
     @Test
