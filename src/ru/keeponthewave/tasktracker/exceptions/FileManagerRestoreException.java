@@ -14,6 +14,6 @@ public class FileManagerRestoreException extends RuntimeException {
 
     @Override
     public String getMessage() {
-      return String.format("In file: %s, line %d: %s", file.getFileName(), line , super.getMessage());
+      return String.format("In file: %s, line %d: %s", file.getFileName(), line, super.getMessage());
     }
 }
