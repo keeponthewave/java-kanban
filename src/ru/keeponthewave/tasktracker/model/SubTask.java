@@ -16,6 +16,7 @@ public class SubTask extends Task {
     public Integer getEpicTaskId() {
         return epicTaskId;
     }
+
     @Override
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,", id, TaskType.SUBTASK, name, status, description) + epicTaskId;

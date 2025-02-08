@@ -28,6 +28,7 @@ public class EpicTask extends Task {
     public List<Integer> getSubtaskIds() {
         return subtaskIds;
     }
+
     @Override
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,", id, TaskType.EPIC, name, status, description);
