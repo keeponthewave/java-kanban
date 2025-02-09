@@ -22,7 +22,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    static FileBackedTaskManager loadFromFile(File file) {
+    public static FileBackedTaskManager loadFromFile(File file) {
         Path filePath = file.toPath();
         var fileBackedTaskManager = new FileBackedTaskManager(Managers.getDefaultHistory(), filePath);
 
@@ -160,6 +160,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void deleteAllEpicTasks() {
         super.deleteAllEpicTasks();
+        save();
     }
 
     private void save() {

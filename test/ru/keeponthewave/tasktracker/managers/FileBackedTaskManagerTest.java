@@ -46,6 +46,7 @@ class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
             throw new RuntimeException("Error managing temporary file: " + e.getMessage());
         }
     }
+
     @Test
     public void shouldCorrectlySerialize() throws IOException {
         Task task = new Task("Task1", "Description task1", 1, TaskStatus.NEW);
