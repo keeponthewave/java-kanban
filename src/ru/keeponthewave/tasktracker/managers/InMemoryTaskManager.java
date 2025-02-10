@@ -8,13 +8,13 @@ import ru.keeponthewave.tasktracker.model.TaskStatus;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final Map<Integer, Task> taskMap = new HashMap<>();
-    private final Map<Integer, EpicTask> epicTaskMap = new HashMap<>();
-    private final Map<Integer, SubTask> subTaskMap = new HashMap<>();
+    protected final Map<Integer, Task> taskMap = new HashMap<>();
+    protected final Map<Integer, EpicTask> epicTaskMap = new HashMap<>();
+    protected final Map<Integer, SubTask> subTaskMap = new HashMap<>();
 
     private final HistoryManager historyManager;
 
-    private Integer idCounter = 0;
+    protected Integer idCounter = 0;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
@@ -190,7 +190,7 @@ public class InMemoryTaskManager implements TaskManager {
         return idCounter++;
     }
 
-    private void recalculateEpicStatus(EpicTask epicTask) {
+    protected void recalculateEpicStatus(EpicTask epicTask) {
         if (epicTask.getSubtaskIds().isEmpty()) {
             epicTask.setStatus(TaskStatus.NEW);
             return;

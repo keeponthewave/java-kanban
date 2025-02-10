@@ -15,6 +15,11 @@ public class Task {
         this.status = status;
     }
 
+    public static Task fromString(String str) {
+        String[] splits = str.split(",");
+        return new Task(splits[2], splits[4], Integer.parseInt(splits[0]), TaskStatus.valueOf(splits[3]));
+    }
+
     public String getName() {
         return name;
     }
@@ -59,5 +64,10 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s,%s,%s,%s,%s,", id, TaskType.TASK, name, status, description);
     }
 }
