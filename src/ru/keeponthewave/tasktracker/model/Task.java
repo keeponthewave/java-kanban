@@ -8,6 +8,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Task {
+    public static final String SERIALIZATION_FORMAT = "id,type,name,status,description,startTime,duration,epic";
+    private static final Pattern DESERIALIZE_PATTERN = Pattern.compile("(?<id>\\d*),(?<type>\\w*),(?<name>.*)"
+            + ",(?<status>\\w*),(?<description>.*)"
+            + ",(?<startTs>\\d*),(?<durationMinutes>\\d*),(?<epicId>\\d*)"
+    );
+
     protected String name;
     protected String description;
     protected Integer id;
@@ -15,12 +21,6 @@ public class Task {
     protected Instant startTime;
     protected Duration duration;
     protected TaskType type = TaskType.TASK;
-
-    public final static String SERIALIZATION_FORMAT = "id,type,name,status,description,startTime,duration,epic";
-    private static final Pattern DESERIALIZE_PATTERN = Pattern.compile("(?<id>\\d*),(?<type>\\w*),(?<name>.*)"
-            + ",(?<status>\\w*),(?<description>.*)"
-            + ",(?<startTs>\\d*),(?<durationMinutes>\\d*),(?<epicId>\\d*)"
-    );
 
     public Task(String name, String description, Integer id, TaskStatus status, Instant startTime, Duration duration) {
         this.name = name;
@@ -102,8 +102,8 @@ public class Task {
     @Override
     public String toString() {
         return String.format("%s,%s,%s,%s,%s,%s,%s,", id, type, name, status, description,
-                startTime == null? "" : startTime.toEpochMilli(),
-                duration == null? "" : duration.toMinutes());
+                startTime == null ? "" : startTime.toEpochMilli(),
+                duration == null ? "" : duration.toMinutes());
     }
 
     public static TaskParams taskParamsFromString(String string) {
@@ -118,9 +118,9 @@ public class Task {
                     matcher.group("name"),
                     TaskStatus.valueOf(matcher.group("status")),
                     matcher.group("description"),
-                    !matcher.group("epicId").isBlank()? Integer.parseInt(matcher.group("epicId")) : null,
+                    !matcher.group("epicId").isBlank() ? Integer.parseInt(matcher.group("epicId")) : null,
                     !Objects.equals(startTs, "") ? Instant.ofEpochMilli(Long.parseLong(startTs)) : null,
-                    !Objects.equals(durationMinutes, "")? Duration.ofMinutes(Long.parseLong(durationMinutes)) : null
+                    !Objects.equals(durationMinutes, "") ? Duration.ofMinutes(Long.parseLong(durationMinutes)) : null
             );
         }
         throw new InputMismatchException("Некорректный формат строки");
