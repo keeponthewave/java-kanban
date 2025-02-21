@@ -47,4 +47,6 @@ public interface TaskManager {
     void deleteAllEpicTasks();
 
     List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
 }

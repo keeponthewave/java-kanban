@@ -1,14 +1,16 @@
 package ru.keeponthewave.tasktracker.model;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EpicTask extends Task {
     private final List<Integer> subtaskIds;
+    private Instant endTime;
 
     public static EpicTask fromString(String str) {
-        String[] splits = str.split(",");
-        return new EpicTask(splits[2], splits[4], Integer.parseInt(splits[0]));
+        TaskParams taskParams = Task.taskParamsFromString(str);
+        return new EpicTask(taskParams.name(), taskParams.description(), taskParams.id());
     }
 
     public EpicTask(
@@ -16,7 +18,8 @@ public class EpicTask extends Task {
             String description,
             Integer id
     ) {
-        super(name, description, id, TaskStatus.NEW);
+        super(name, description, id, TaskStatus.NEW, null, null);
+        type = TaskType.EPIC;
         this.subtaskIds = new ArrayList<>();
     }
 
@@ -29,8 +32,12 @@ public class EpicTask extends Task {
         return subtaskIds;
     }
 
+    public void setEndTime(Instant endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
-    public String toString() {
-        return String.format("%s,%s,%s,%s,%s,", id, TaskType.EPIC, name, status, description);
+    public Instant getEndTime() {
+        return endTime;
     }
 }

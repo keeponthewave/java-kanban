@@ -13,7 +13,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     Path file;
 
     @Override
@@ -28,7 +28,7 @@ class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
         try {
             Files.writeString(file, """
                     id,type,name,status,description,epic
-                    10,EPIC,epic,DONE,It's ,epic2,
+                    10,EPIC,epic,DONE,It's ,epic2,,,
                     """);
         } catch (Exception e) {
             throw new RuntimeException("Error write epic to file: " + e.getMessage());
@@ -49,13 +49,13 @@ class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     public void shouldCorrectlySerialize() throws IOException {
-        Task task = new Task("Task1", "Description task1", 1, TaskStatus.NEW);
-        SubTask subTask = new SubTask("Sub Task2", "Description sub task3", 2, TaskStatus.NEW, 10);
+        Task task = new Task("Task1", "Description task1", 1, TaskStatus.NEW, null, null);
+        SubTask subTask = new SubTask("Sub Task2", "Description sub task3", 2, TaskStatus.NEW, 10, null, null);
 
         taskManager.createTask(task);
         taskManager.createSubTask(subTask);
 
-        String expectedString = "id,type,name,status,description,epic\n"
+        String expectedString = Task.SERIALIZATION_FORMAT + "\n"
                 + task + "\n"
                 + epic + "\n"
                 + subTask + "\n";
@@ -65,9 +65,9 @@ class FileBackedTaskManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     public void shouldCorrectlyDeserialize() throws IOException {
-        Task task = new Task("Task1", "Description task1", 1, TaskStatus.NEW);
-        SubTask subTask = new SubTask("Sub Task2", "Description sub task3", 2, TaskStatus.NEW, 10);
-        String serializedData = "id,type,name,status,description,epic\n"
+        Task task = new Task("Task1", "Description task1", 1, TaskStatus.NEW, null, null);
+        SubTask subTask = new SubTask("Sub Task2", "Description sub task3", 2, TaskStatus.NEW, 10, null, null);
+        String serializedData = Task.SERIALIZATION_FORMAT + "\n"
                 + task + "\n"
                 + epic + "\n"
                 + subTask + "\n";

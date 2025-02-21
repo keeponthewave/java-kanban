@@ -66,7 +66,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     }
                     fileBackedTaskManager.subTaskMap.put(subTask.getId(), subTask);
                     epic.getSubtaskIds().add(subTask.getId());
-                    fileBackedTaskManager.recalculateEpicStatus(epic);
+                    fileBackedTaskManager.recalculateEpicFields(epic);
                 } else {
                     throw new IOException("Неверный тип задачи");
                 }
@@ -165,7 +165,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (var writer = Files.newBufferedWriter(file)) {
-            writer.write("id,type,name,status,description,epic");
+            writer.write(Task.SERIALIZATION_FORMAT);
             writer.newLine();
 
             writeTaskMap(taskMap, writer);
