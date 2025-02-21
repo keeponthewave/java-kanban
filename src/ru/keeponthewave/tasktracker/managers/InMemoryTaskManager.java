@@ -299,6 +299,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         epicTask.setStatus(TaskStatus.IN_PROGRESS);
     }
+
     private void recalculateEpicTime(EpicTask epicTask) {
         var totalDuration = epicTask.getSubtaskIds()
                     .stream()
