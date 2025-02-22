@@ -330,13 +330,13 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private boolean canPrioritized(Task task) {
+    protected boolean canPrioritized(Task task) {
         return task.getStartTime() != null
                 && task.getEndTime() != null
                 && task.getStartTime().isBefore(task.getEndTime());
     }
 
-    private boolean hasTimeIntersection(Task another, Stream<Task> storage) {
+    protected boolean hasTimeIntersection(Task another, Stream<Task> storage) {
 
         BiPredicate<Instant, Instant> isBeforeOrEq = (a, b) -> a.isBefore(b) || a.equals(b);
         BiPredicate<Instant, Instant> isAfterOrEq = (a, b) -> a.isAfter(b) || a.equals(b);

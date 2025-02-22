@@ -2,6 +2,7 @@ package ru.keeponthewave.tasktracker.managers;
 
 import ru.keeponthewave.tasktracker.exceptions.FileManagerRestoreException;
 import ru.keeponthewave.tasktracker.exceptions.FileManagerSaveException;
+import ru.keeponthewave.tasktracker.exceptions.TimeIntersectionException;
 import ru.keeponthewave.tasktracker.model.EpicTask;
 import ru.keeponthewave.tasktracker.model.SubTask;
 import ru.keeponthewave.tasktracker.model.Task;
@@ -44,6 +45,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     if (task.getId() > maxId) {
                         maxId = task.getId();
                     }
+                    if (fileBackedTaskManager.canPrioritized(task)) {
+                        if (fileBackedTaskManager.hasTimeIntersection(task, fileBackedTaskManager.prioritizedTaskSet.stream())) {
+                            throw new TimeIntersectionException("На заданное время уже запланирована задача.");
+                        }
+                        fileBackedTaskManager.prioritizedTaskSet.add(task);
+                    }
                     fileBackedTaskManager.taskMap.put(task.getId(), task);
                 } else if (taskType == TaskType.EPIC) {
                     EpicTask epic = EpicTask.fromString(line);
@@ -56,13 +63,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     if (subTask.getId() > maxId) {
                         maxId = subTask.getId();
                     }
-
                     var epic = fileBackedTaskManager.epicTaskMap.get(subTask.getEpicTaskId());
                     if (epic == null) {
                         throw new FileManagerRestoreException(
                                 "Ошибка при восстановлении из файла: Эпика не существует",
                                 lineNum,
                                 filePath);
+                    }
+                    if (fileBackedTaskManager.canPrioritized(subTask)) {
+                        if (fileBackedTaskManager.hasTimeIntersection(subTask, fileBackedTaskManager.prioritizedTaskSet.stream())) {
+                            throw new TimeIntersectionException("На заданное время уже запланирована задача.");
+                        }
+                        fileBackedTaskManager.prioritizedTaskSet.add(subTask);
                     }
                     fileBackedTaskManager.subTaskMap.put(subTask.getId(), subTask);
                     epic.getSubtaskIds().add(subTask.getId());
@@ -72,7 +84,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
                 lineNum++;
             }
-        } catch (IOException | ArrayIndexOutOfBoundsException e) {
+        } catch (IOException | ArrayIndexOutOfBoundsException | TimeIntersectionException e) {
             throw new FileManagerRestoreException(
                     "Ошибка при восстановлении из файла: " + e.getMessage(),
                     lineNum,
