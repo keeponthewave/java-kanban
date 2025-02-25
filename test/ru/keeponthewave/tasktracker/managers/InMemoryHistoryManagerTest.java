@@ -19,7 +19,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldCorrectlyAddSimpleTaskToHistory() {
-        Task task = new Task("Test task", "it's test task", 1, TaskStatus.NEW);
+        Task task = new Task("Test task", "it's test task", 1, TaskStatus.NEW, null, null);
         historyManager.add(task);
 
         List<Task> history = historyManager.getHistory();
@@ -31,8 +31,8 @@ class InMemoryHistoryManagerTest {
     @Test
     void shouldCorrectlyAddSimpleTaskToHistoryWhenAddCopyOfTask() {
         var tasksList = List.of(
-                new Task("Simple task", "it's test task", 1, TaskStatus.NEW),
-                new Task("Simple task", "it's test task", 2, TaskStatus.NEW)
+                new Task("Simple task", "it's test task", 1, TaskStatus.NEW, null, null),
+                new Task("Simple task", "it's test task", 2, TaskStatus.NEW, null, null)
         );
 
         for (var task : tasksList) {
@@ -42,7 +42,7 @@ class InMemoryHistoryManagerTest {
         List<Task> historyBefore = historyManager.getHistory();
         assertEquals(historyBefore.size(), tasksList.size());
 
-        var copyOfFirstTask = new Task("Copy of first task", "it's test task", 1, TaskStatus.NEW);
+        var copyOfFirstTask = new Task("Copy of first task", "it's test task", 1, TaskStatus.NEW, null, null);
         historyManager.add(copyOfFirstTask);
 
         List<Task> historyAfter = historyManager.getHistory();
@@ -54,8 +54,8 @@ class InMemoryHistoryManagerTest {
     @Test
     void shouldCorrectlyRemoveTasksFromHistory() {
         var tasksList = List.of(
-                new Task("Simple task", "it's test task", 1, TaskStatus.NEW),
-                new Task("Simple task", "it's test task", 2, TaskStatus.NEW)
+                new Task("Simple task", "it's test task", 1, TaskStatus.NEW, null, null),
+                new Task("Simple task", "it's test task", 2, TaskStatus.NEW, null, null)
         );
 
         for (var task : tasksList) {
@@ -79,8 +79,8 @@ class InMemoryHistoryManagerTest {
     @Test
     void shouldHistoryBeLikeBeforeWhenRemoveNonExistingTask() {
         var tasksList = List.of(
-                new Task("Simple task", "it's test task", 1, TaskStatus.NEW),
-                new Task("Simple task", "it's test task", 2, TaskStatus.NEW)
+                new Task("Simple task", "it's test task", 1, TaskStatus.NEW, null, null),
+                new Task("Simple task", "it's test task", 2, TaskStatus.NEW, null, null)
         );
 
         for (var task : tasksList) {
@@ -100,5 +100,4 @@ class InMemoryHistoryManagerTest {
         assertEquals(historyAfter.getFirst().getId(), tasksList.getFirst().getId());
         assertEquals(historyAfter.getLast().getId(), tasksList.getLast().getId());
     }
-
 }
