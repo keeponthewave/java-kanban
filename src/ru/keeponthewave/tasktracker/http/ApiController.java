@@ -28,7 +28,7 @@ public abstract class ApiController implements HttpHandler {
 
     protected ApiController() {
         Class<?> clazz = getClass();
-        if (!clazz.isAnnotationPresent(Controller.class)){
+        if (!clazz.isAnnotationPresent(Controller.class)) {
             return;
         }
         String basePath = clazz.getAnnotation(Controller.class).path();
