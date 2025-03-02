@@ -48,7 +48,7 @@ public class SubtasksController extends ApiController {
             var task = new SubTask(dto.name(), dto.description(), dto.id(), dto.status(), dto.epicId(), dto.startTime(), dto.duration());
             if (task.getId() == null) {
                 SubTask created = manager.createSubTask(task);
-                return Created(
+                return created(
                         new SubTaskDto(created.getId(), created.getName(), created.getDescription(),
                                 created.getStatus(), created.getEpicTaskId(), created.getStartTime(),
                                 created.getDuration())

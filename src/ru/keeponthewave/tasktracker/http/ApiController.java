@@ -140,7 +140,7 @@ public abstract class ApiController implements HttpHandler {
         return new HttpResult<>(HttpStatus.OK, result);
     }
 
-    protected <T> HttpResult<T> Created(T result) {
+    protected <T> HttpResult<T> created(T result) {
         return new HttpResult<>(HttpStatus.CREATED, result);
     }
 

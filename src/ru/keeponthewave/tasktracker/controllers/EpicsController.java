@@ -49,7 +49,7 @@ public class EpicsController extends ApiController {
             var task = new EpicTask(dto.name(), dto.description(), dto.id());
             if (task.getId() == null) {
                 EpicTask created = manager.createEpicTask(task);
-                return Created(
+                return created(
                         new EpicResponseDto(created.getId(), created.getName(), created.getDescription(),
                                 created.getStatus(), created.getSubtaskIds(),
                                 created.getStartTime(), created.getDuration())

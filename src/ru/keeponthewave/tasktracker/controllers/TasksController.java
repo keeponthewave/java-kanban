@@ -46,7 +46,7 @@ public class TasksController extends ApiController {
             var task = new Task(dto.name(), dto.description(), dto.id(), dto.status(), dto.startTime(), dto.duration());
             if (task.getId() == null) {
                 Task created = manager.createTask(task);
-                return Created(
+                return created(
                         new TaskDto(created.getId(), created.getName(), created.getDescription(), created.getStatus(),
                                 created.getStartTime(), created.getDuration())
                 );
