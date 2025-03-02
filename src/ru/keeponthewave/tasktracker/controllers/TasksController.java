@@ -8,6 +8,7 @@ import ru.keeponthewave.tasktracker.managers.TaskManager;
 import ru.keeponthewave.tasktracker.model.Task;
 
 import java.util.NoSuchElementException;
+
 @Controller(path = "/tasks")
 public class TasksController extends ApiController {
     private final TaskManager manager;
