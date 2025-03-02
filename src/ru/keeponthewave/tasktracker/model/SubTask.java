@@ -22,6 +22,10 @@ public class SubTask extends Task {
         return epicTaskId;
     }
 
+    public void setEpicTaskId(Integer epicTaskId) {
+        this.epicTaskId = epicTaskId;
+    }
+
     @Override
     public String toString() {
         return super.toString() + epicTaskId;

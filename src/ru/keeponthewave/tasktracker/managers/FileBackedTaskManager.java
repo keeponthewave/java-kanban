@@ -7,6 +7,7 @@ import ru.keeponthewave.tasktracker.model.EpicTask;
 import ru.keeponthewave.tasktracker.model.SubTask;
 import ru.keeponthewave.tasktracker.model.Task;
 import ru.keeponthewave.tasktracker.model.TaskType;
+import ru.keeponthewave.tasktracker.http.ioc.InjectValue;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final Path file;
 
-    public FileBackedTaskManager(HistoryManager historyManager, Path file) {
+    public FileBackedTaskManager(HistoryManager historyManager, @InjectValue(token = "backedTaskManagerPath") Path file) {
         super(historyManager);
         this.file = file;
     }
@@ -109,10 +110,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public int deleteTaskById(int id) {
-        int deletedId = super.deleteTaskById(id);
+    public Task deleteTaskById(int id) {
+        Task task = super.deleteTaskById(id);
         save();
-        return deletedId;
+        return task;
     }
 
     @Override
@@ -136,10 +137,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public int deleteSubTaskById(int id) {
-        int deletedId = super.deleteSubTaskById(id);
+    public SubTask deleteSubTaskById(int id) {
+        SubTask deletedSubTask = super.deleteSubTaskById(id);
         save();
-        return deletedId;
+        return deletedSubTask;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ru.keeponthewave.tasktracker.managers;
 
 import ru.keeponthewave.tasktracker.exceptions.TimeIntersectionException;
+import ru.keeponthewave.tasktracker.http.ioc.InjectableConstructor;
 import ru.keeponthewave.tasktracker.model.EpicTask;
 import ru.keeponthewave.tasktracker.model.SubTask;
 import ru.keeponthewave.tasktracker.model.Task;
@@ -22,6 +23,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     protected Integer idCounter = 0;
 
+    @InjectableConstructor
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
     }
@@ -48,7 +50,9 @@ public class InMemoryTaskManager implements TaskManager {
             }
             prioritizedTaskSet.add(task);
         }
-        return taskMap.put(task.getId(), task);
+        taskMap.put(task.getId(), task);
+
+        return task;
     }
 
     @Override
@@ -71,12 +75,12 @@ public class InMemoryTaskManager implements TaskManager {
         if (canPrioritized(task)) {
             prioritizedTaskSet.add(task);
         }
-
-        return taskMap.put(task.getId(), task);
+        taskMap.put(task.getId(), task);
+        return task;
     }
 
     @Override
-    public int deleteTaskById(int id) {
+    public Task deleteTaskById(int id) {
         checkTaskExistsInStorage(id, taskMap);
 
         var alreadyPrioritized = prioritizedTaskSet
@@ -85,8 +89,7 @@ public class InMemoryTaskManager implements TaskManager {
                 .findFirst();
         alreadyPrioritized.ifPresent(prioritizedTaskSet::remove);
 
-        taskMap.remove(id);
-        return id;
+        return taskMap.remove(id);
     }
 
     @Override
@@ -110,7 +113,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask createSubTask(SubTask task) {
-        checkTaskExistsInStorage(task.getEpicTaskId(), epicTaskMap);
+        try {
+            checkTaskExistsInStorage(task.getEpicTaskId(), epicTaskMap);
+        } catch (Exception e) {
+            throw new NoSuchElementException("У подзадачи отсутвует эпик", e);
+        }
+
         task.setId(generateId());
 
         if (canPrioritized(task)) {
@@ -130,7 +138,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask updateSubTask(SubTask task) {
-        checkTaskExistsInStorage(task.getId(), subTaskMap);
+        try {
+            checkTaskExistsInStorage(task.getId(), subTaskMap);
+        } catch (Exception e) {
+            throw new NoSuchElementException("Отсутвует подзадача", e);
+        }
+        task.setEpicTaskId(subTaskMap.get(task.getId()).getEpicTaskId());
         subTaskMap.put(task.getId(), task);
 
         if (
@@ -158,7 +171,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int deleteSubTaskById(int id) {
+    public SubTask deleteSubTaskById(int id) {
         checkTaskExistsInStorage(id, subTaskMap);
         var subTask = subTaskMap.remove(id);
 
@@ -174,7 +187,7 @@ public class InMemoryTaskManager implements TaskManager {
                     .remove((Integer) id);
             recalculateEpicFields(epic);
         }
-        return id;
+        return subTask;
     }
 
     @Override

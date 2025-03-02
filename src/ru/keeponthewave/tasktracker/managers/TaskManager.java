@@ -16,7 +16,7 @@ public interface TaskManager {
 
     Task updateTask(Task task);
 
-    int deleteTaskById(int id);
+    Task deleteTaskById(int id);
 
     void deleteAllTasks();
 
@@ -28,7 +28,7 @@ public interface TaskManager {
 
     SubTask updateSubTask(SubTask task);
 
-    int deleteSubTaskById(int id);
+    SubTask deleteSubTaskById(int id);
 
     void deleteAllSubTasks();
 
