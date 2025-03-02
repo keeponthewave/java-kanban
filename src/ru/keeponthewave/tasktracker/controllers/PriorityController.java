@@ -22,7 +22,7 @@ public class PriorityController extends ApiController {
 
     @Endpoint(method = HttpMethod.GET)
     public HttpResult<?> getPrioritized() {
-        return Ok(manager.getPrioritizedTasks().stream().map(t -> {
+        return ok(manager.getPrioritizedTasks().stream().map(t -> {
             if (t.getType() == TaskType.SUBTASK) {
                 var subtask = (SubTask) t;
                 return new UnknownTaskDto(subtask.getId(), subtask.getName(), subtask.getDescription(), subtask.getStatus(),

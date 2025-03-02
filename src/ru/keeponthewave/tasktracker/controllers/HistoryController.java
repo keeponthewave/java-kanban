@@ -21,7 +21,7 @@ public class HistoryController extends ApiController {
 
     @Endpoint(method = HttpMethod.GET)
     public HttpResult<?> getHistory() {
-        return Ok(manager.getHistory().stream().map(t -> {
+        return ok(manager.getHistory().stream().map(t -> {
             if (t.getType() == TaskType.SUBTASK) {
                 var subtask = (SubTask) t;
                 return new UnknownTaskDto(subtask.getId(), subtask.getName(), subtask.getDescription(), subtask.getStatus(),

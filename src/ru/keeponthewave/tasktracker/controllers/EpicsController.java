@@ -23,7 +23,7 @@ public class EpicsController extends ApiController {
 
     @Endpoint(method = HttpMethod.GET)
     public HttpResult<?> getAllEpics() {
-        return Ok(manager.getAllEpicTasks()
+        return ok(manager.getAllEpicTasks()
                 .stream()
                 .map(task -> new EpicResponseDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
                         task.getSubtaskIds(), task.getStartTime(), task.getDuration()
@@ -35,11 +35,11 @@ public class EpicsController extends ApiController {
     public HttpResult<?> getEpicById(@FromPath(name = "id") int id) {
         try {
             var task = manager.getEpicTaskById(id);
-            return Ok(new EpicResponseDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
+            return ok(new EpicResponseDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
                     task.getSubtaskIds(), task.getStartTime(), task.getDuration()
             ));
         } catch (NoSuchElementException e) {
-            return NotFound(String.format("Подзадачи c id=%d не существует", id));
+            return notFound(String.format("Подзадачи c id=%d не существует", id));
         }
     }
 
@@ -56,14 +56,14 @@ public class EpicsController extends ApiController {
                 );
             } else {
                 EpicTask updated = manager.updateEpicTask(task);
-                return Ok(
+                return ok(
                         new EpicResponseDto(updated.getId(), updated.getName(), updated.getDescription(),
                                 updated.getStatus(), updated.getSubtaskIds(),
                                 updated.getStartTime(), updated.getDuration())
                 );
             }
         } catch (NoSuchElementException e) {
-            return NotFound(e.getMessage());
+            return notFound(e.getMessage());
         }
     }
 
@@ -71,13 +71,13 @@ public class EpicsController extends ApiController {
     public HttpResult<?> deleteEpicTask(@FromPath(name = "id") int id) {
         try {
             EpicTask task = manager.deleteEpicTaskById(id);
-            return Ok(
+            return ok(
                     new EpicResponseDto(task.getId(), task.getName(), task.getDescription(),
                             task.getStatus(), task.getSubtaskIds(),
                             task.getStartTime(), task.getDuration())
             );
         } catch (NoSuchElementException e) {
-            return NotFound(e.getMessage());
+            return notFound(e.getMessage());
         }
     }
 
@@ -85,7 +85,7 @@ public class EpicsController extends ApiController {
     public HttpResult<?> getEpicsSubtasks(@FromPath(name = "id") int id) {
         try {
             EpicTask epic = manager.getEpicTaskById(id);
-            return Ok(
+            return ok(
                     manager.getEpicSubTasks(epic)
                             .stream()
                             .map(task -> new SubTaskDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
@@ -94,7 +94,7 @@ public class EpicsController extends ApiController {
                             )).toList()
             );
         } catch (NoSuchElementException e) {
-            return NotFound(e.getMessage());
+            return notFound(e.getMessage());
         }
     }
 }

@@ -20,7 +20,7 @@ public class TasksController extends ApiController {
 
     @Endpoint(method = HttpMethod.GET)
     public HttpResult<?> getAllTasks() {
-        return Ok(manager.getAllTasks()
+        return ok(manager.getAllTasks()
                 .stream()
                 .map(task -> new TaskDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
                         task.getStartTime(), task.getDuration()
@@ -32,11 +32,11 @@ public class TasksController extends ApiController {
     public HttpResult<?> getTaskById(@FromPath(name = "id") int id) {
         try {
             var task = manager.getTaskById(id);
-            return Ok(new TaskDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
+            return ok(new TaskDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
                     task.getStartTime(), task.getDuration()
             ));
         } catch (NoSuchElementException e) {
-            return NotFound(e.getMessage());
+            return notFound(e.getMessage());
         }
     }
 
@@ -52,15 +52,15 @@ public class TasksController extends ApiController {
                 );
             } else {
                 Task updated = manager.updateTask(task);
-                return Ok(
+                return ok(
                         new TaskDto(updated.getId(), updated.getName(), updated.getDescription(), updated.getStatus(),
                                 updated.getStartTime(), updated.getDuration())
                 );
             }
         } catch (TimeIntersectionException e) {
-            return NotAcceptable(e.getMessage());
+            return notAcceptable(e.getMessage());
         } catch (NoSuchElementException e) {
-            return NotFound(e.getMessage());
+            return notFound(e.getMessage());
         }
     }
 
@@ -68,12 +68,12 @@ public class TasksController extends ApiController {
     public HttpResult<?> deleteTask(@FromPath(name = "id") int id) {
         try {
             Task task = manager.deleteTaskById(id);
-            return Ok(
+            return ok(
                     new TaskDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
                             task.getStartTime(), task.getDuration())
             );
         } catch (NoSuchElementException e) {
-            return NotFound(e.getMessage());
+            return notFound(e.getMessage());
         }
     }
 }

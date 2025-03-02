@@ -86,7 +86,7 @@ public abstract class ApiController implements HttpHandler {
                                 params[i] = Integer.parseInt(param);
                                 continue;
                             } catch (NumberFormatException e) {
-                                sendJson(exchange, BadRequest(
+                                sendJson(exchange, badRequest(
                                         String.format("Ошибка: Неверный формат параметра пути. Путь %s, где %s - целое число", pattern, pathParamName)
                                 ));
                                 return;
@@ -107,36 +107,36 @@ public abstract class ApiController implements HttpHandler {
                     return;
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     log.error("Ошибка обработки запроса", e);
-                    sendJson(exchange, InternalServerError("Произошла непредвиденная ошибка"));
+                    sendJson(exchange, internalServerError("Произошла непредвиденная ошибка"));
                     return;
                 }
             }
         }
-        HttpResult<HttpErrorDto> notImplementedResult = NotImplemented(HttpStatus.NOT_IMPLEMENTED.getTitle());
+        HttpResult<HttpErrorDto> notImplementedResult = notImplemented(HttpStatus.NOT_IMPLEMENTED.getTitle());
         sendJson(exchange, notImplementedResult);
     }
 
-    protected HttpResult<HttpErrorDto> NotImplemented(String message) {
+    protected HttpResult<HttpErrorDto> notImplemented(String message) {
         return new HttpResult<>(HttpStatus.NOT_IMPLEMENTED, new HttpErrorDto(HttpStatus.NOT_IMPLEMENTED, message));
     }
 
-    protected HttpResult<HttpErrorDto> InternalServerError(String message) {
+    protected HttpResult<HttpErrorDto> internalServerError(String message) {
         return new HttpResult<>(HttpStatus.INTERNAL_SERVER_ERROR, new HttpErrorDto(HttpStatus.INTERNAL_SERVER_ERROR, message));
     }
 
-    protected HttpResult<HttpErrorDto> NotAcceptable(String message) {
+    protected HttpResult<HttpErrorDto> notAcceptable(String message) {
         return new HttpResult<>(HttpStatus.NOT_ACCEPTABLE, new HttpErrorDto(HttpStatus.NOT_ACCEPTABLE, message));
     }
 
-    protected HttpResult<HttpErrorDto> BadRequest(String message) {
+    protected HttpResult<HttpErrorDto> badRequest(String message) {
         return new HttpResult<>(HttpStatus.BAD_REQUEST, new HttpErrorDto(HttpStatus.BAD_REQUEST, message));
     }
 
-    protected HttpResult<HttpErrorDto> NotFound(String message) {
+    protected HttpResult<HttpErrorDto> notFound(String message) {
         return new HttpResult<>(HttpStatus.NOT_FOUND, new HttpErrorDto(HttpStatus.NOT_FOUND, message));
     }
 
-    protected <T> HttpResult<T> Ok(T result) {
+    protected <T> HttpResult<T> ok(T result) {
         return new HttpResult<>(HttpStatus.OK, result);
     }
 

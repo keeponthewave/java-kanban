@@ -22,7 +22,7 @@ public class SubtasksController extends ApiController {
 
     @Endpoint(method = HttpMethod.GET)
     public HttpResult<?> getAllTasks() {
-        return Ok(manager.getAllSubTasks()
+        return ok(manager.getAllSubTasks()
                 .stream()
                 .map(task -> new SubTaskDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
                         task.getEpicTaskId(), task.getStartTime(), task.getDuration()
@@ -34,11 +34,11 @@ public class SubtasksController extends ApiController {
     public HttpResult<?> getSubtaskById(@FromPath(name = "id") int id) {
         try {
             var task = manager.getSubTaskById(id);
-            return Ok(new SubTaskDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
+            return ok(new SubTaskDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
                     task.getEpicTaskId(), task.getStartTime(), task.getDuration()
             ));
         } catch (NoSuchElementException e) {
-            return NotFound(String.format("Подзадачи c id=%d не существует", id));
+            return notFound(String.format("Подзадачи c id=%d не существует", id));
         }
     }
 
@@ -55,15 +55,15 @@ public class SubtasksController extends ApiController {
                 );
             } else {
                 SubTask updated = manager.updateSubTask(task);
-                return Ok(
+                return ok(
                         new SubTaskDto(updated.getId(), updated.getName(), updated.getDescription(), updated.getStatus(),
                                 updated.getEpicTaskId(), updated.getStartTime(), updated.getDuration())
                 );
             }
         } catch (TimeIntersectionException e) {
-            return NotAcceptable(e.getMessage());
+            return notAcceptable(e.getMessage());
         } catch (NoSuchElementException e) {
-            return NotFound(e.getMessage());
+            return notFound(e.getMessage());
         }
     }
 
@@ -71,12 +71,12 @@ public class SubtasksController extends ApiController {
     public HttpResult<?> deleteSubtask(@FromPath(name = "id") int id) {
         try {
             SubTask task = manager.deleteSubTaskById(id);
-            return Ok(
+            return ok(
                     new SubTaskDto(task.getId(), task.getName(), task.getDescription(), task.getStatus(),
                             task.getEpicTaskId(), task.getStartTime(), task.getDuration())
             );
         } catch (NoSuchElementException e) {
-            return NotFound(e.getMessage());
+            return notFound(e.getMessage());
         }
     }
 }
