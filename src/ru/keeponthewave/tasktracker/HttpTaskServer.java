@@ -38,21 +38,21 @@ public class HttpTaskServer {
     }
 
     public static void main(String[] args) throws IOException {
-//        var httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
-//        var taskServer = new HttpTaskServer(httpServer);
-//
-//        taskServer.configureGson(builder ->
-//                builder.registerTypeAdapter(Instant.class, new InstantTypeAdapter())
-//                        .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-//        );
-//
-//        taskServer.configureServices(ioc -> {
-//            ioc.register(TaskManager.class, InMemoryTaskManager.class);
-//            ioc.register(HistoryManager.class, InMemoryHistoryManager.class);
-//        });
-//        // taskServer.configureValue("backedTaskManagerPath", Path.of(""));
-//
-//        taskServer.serve();
+        var httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+        var taskServer = new HttpTaskServer(httpServer);
+
+        taskServer.configureGson(builder ->
+                builder.registerTypeAdapter(Instant.class, new InstantTypeAdapter())
+                        .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+        );
+
+        taskServer.configureServices(ioc -> {
+            ioc.register(TaskManager.class, InMemoryTaskManager.class);
+            ioc.register(HistoryManager.class, InMemoryHistoryManager.class);
+        });
+        // taskServer.configureValue("backedTaskManagerPath", Path.of(""));
+
+        taskServer.serve();
     }
 
 
