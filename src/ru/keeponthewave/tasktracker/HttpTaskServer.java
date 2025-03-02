@@ -93,6 +93,7 @@ public class HttpTaskServer {
         server.start();
         logger.info("Started on http://{}:{}", HOST, PORT);
     }
+
     public void stop() {
         server.stop(0);
     }
