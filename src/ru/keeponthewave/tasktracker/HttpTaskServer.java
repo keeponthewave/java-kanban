@@ -4,9 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ru.keeponthewave.tasktracker.controllers.*;
 import ru.keeponthewave.tasktracker.exceptions.HttpServerInitializationError;
 import ru.keeponthewave.tasktracker.http.ApiController;
 import ru.keeponthewave.tasktracker.exceptions.IocException;
@@ -21,14 +19,15 @@ import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class HttpTaskServer {
-    private final Logger logger = LoggerFactory.getLogger(HttpTaskServer.class);
     private Gson gson;
+    private List<Class<?>> controllers = new ArrayList<>();
     private final InversionOfControlContainer ioc = new InversionOfControlContainer();
-
     private static final int PORT = 5050;
     private static final String HOST = "localhost";
     private final HttpServer server;
@@ -40,6 +39,16 @@ public class HttpTaskServer {
     public static void main(String[] args) throws IOException {
         var httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
         var taskServer = new HttpTaskServer(httpServer);
+
+        taskServer.setControllers(
+                new ArrayList<>() {{
+                    add(TasksController.class);
+                    add(SubtasksController.class);
+                    add(EpicsController.class);
+                    add(HistoryController.class);
+                    add(PriorityController.class);
+                }}
+        );
 
         taskServer.configureGson(builder ->
                 builder.registerTypeAdapter(Instant.class, new InstantTypeAdapter())
@@ -67,9 +76,6 @@ public class HttpTaskServer {
 
     private void initControllers() {
         try {
-            Reflections reflections = new Reflections(getClass().getPackageName());
-            var controllers = reflections.getSubTypesOf(ApiController.class);
-
             Field gsonField = ApiController.class.getDeclaredField("gson");
             gsonField.setAccessible(true);
             gsonField.set(null, gson);
@@ -84,14 +90,18 @@ public class HttpTaskServer {
             }
 
         } catch (IocException | NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Ошибка инициализации контроллера", e);
+            System.out.println("Ошибка инициализации контроллера " + e.getMessage());
             throw new HttpServerInitializationError("Ошибка инициализации контроллера", e);
         }
     }
 
+    public void setControllers(List<Class<?>> controllers) {
+        this.controllers = controllers;
+    }
+
     public void serve() {
         server.start();
-        logger.info("Started on http://{}:{}", HOST, PORT);
+        System.out.printf("Started on http://%s:%d%n", HOST, PORT);
     }
 
     public void stop() {

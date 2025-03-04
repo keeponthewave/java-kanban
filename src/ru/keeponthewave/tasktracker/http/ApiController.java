@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.keeponthewave.tasktracker.http.ioc.Controller;
 import ru.keeponthewave.tasktracker.http.ioc.Endpoint;
 import ru.keeponthewave.tasktracker.http.ioc.FromBody;
@@ -22,7 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class ApiController implements HttpHandler {
-    private static final Logger log = LoggerFactory.getLogger(ApiController.class);
     private final Map<String, Map<HttpMethod, Method>> routes = new HashMap<>();
     private static Gson gson;
 
@@ -73,7 +70,7 @@ public abstract class ApiController implements HttpHandler {
                            params[i] = bodyInstance;
                            continue;
                        } catch (JsonSyntaxException e) {
-                           log.error("Ошибка десериализации", e);
+                           System.out.println("Ошибка десериализации: " + e.getMessage());
                            return;
                        }
                     }
@@ -96,8 +93,7 @@ public abstract class ApiController implements HttpHandler {
                             params[i] = param;
                             continue;
                         }
-
-                        log.error("Недопустимый тип параметра в методе {} -> {}", m, current);
+                        System.out.println("Недопустимый тип параметра в методе: " + m + current);
                     }
                 }
 
@@ -106,7 +102,7 @@ public abstract class ApiController implements HttpHandler {
                     sendJson(exchange, result);
                     return;
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    log.error("Ошибка обработки запроса", e);
+                    System.out.println("Ошибка обработки запроса" + e.getMessage());
                     sendJson(exchange, internalServerError("Произошла непредвиденная ошибка"));
                     return;
                 }
@@ -153,7 +149,7 @@ public abstract class ApiController implements HttpHandler {
             exchange.getResponseBody().write(resp);
             exchange.close();
         } catch (Throwable e) {
-            log.error("Ошибка при отправке: {}", e.getMessage());
+            System.out.println("Ошибка при отправке: " + e.getMessage());
         }
     }
 }

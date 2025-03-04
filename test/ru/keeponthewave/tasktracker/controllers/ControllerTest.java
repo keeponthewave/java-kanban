@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 
 abstract class ControllerTest {
     static final int PORT = 8080;
@@ -28,6 +29,16 @@ abstract class ControllerTest {
         taskServer.configureGson(builder ->
                 builder.registerTypeAdapter(Instant.class, new InstantTypeAdapter())
                         .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+        );
+        
+        taskServer.setControllers(
+                new ArrayList<>() {{
+                    add(TasksController.class);
+                    add(SubtasksController.class);
+                    add(EpicsController.class);
+                    add(HistoryController.class);
+                    add(PriorityController.class);
+                }}
         );
 
         taskServer.configureServices(ioc -> ioc.register(TaskManager.class, manager));
