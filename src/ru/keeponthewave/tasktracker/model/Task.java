@@ -86,11 +86,15 @@ public class Task {
         this.duration = duration;
     }
 
+    public TaskType getType() {
+        return type;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
+        if (!(o instanceof Task task)) return false;
         return Objects.equals(getId(), task.getId());
     }
 

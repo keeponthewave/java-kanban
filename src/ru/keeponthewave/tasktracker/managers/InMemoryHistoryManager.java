@@ -1,5 +1,6 @@
 package ru.keeponthewave.tasktracker.managers;
 
+import ru.keeponthewave.tasktracker.http.ioc.InjectableConstructor;
 import ru.keeponthewave.tasktracker.model.Task;
 
 import java.util.*;
@@ -27,6 +28,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
+    @InjectableConstructor
     public InMemoryHistoryManager() {
         head.next = tail;
         tail.prev = head;
